@@ -1,3 +1,3 @@
 # qc_trim_screen
 
-bpipe staging
+bpipe staging area
