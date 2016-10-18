@@ -1,3 +1,3 @@
 # qc_trim_screen
 
-bpipe staging area
+bpipe staging area for fastqc and trimmomatic
