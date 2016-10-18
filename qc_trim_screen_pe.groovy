@@ -33,8 +33,8 @@ trimmomatic_PE = {
 		exec """
 			$TRIMMOMATIC PE -phred33 
 			$input1.gz $input2.gz
-			$output1.fastq ${output1.prefix}.R1_001_SE.fastq
-			$output2.fastq ${output2.prefix}.R2_001_PE.fastq					
+			$output1.fastq ${output1.prefix}_SE.fastq
+			$output2.fastq ${output2.prefix}_PE.fastq					
 			ILLUMINACLIP:/srv/data0/dbs/trimmomatic_db/contaminant_list.fasta:2:30:10
 			LEADING:20 TRAILING:20 MINLEN:40
 		""" 
@@ -61,17 +61,12 @@ trimmomatic_SE = {
 }
 
 
-
-
-
-
-
 // Single sample, no parallelism
-run { fastqc_pre + trimmomatic_PE }
+//run { fastqc_pre + trimmomatic_PE }
 
 // Multiple samples where file names begin with sample
 // name and are separated by underscore from the rest of the 
 // file name
-//Bpipe.run { 
-//	"%_*.fastq.gz" * [ fastqc_pre, trimmomatic_PE ]
-//}
+Bpipe.run { 
+	"%_*.fastq.gz" * [ fastqc_pre, trimmomatic_PE ]
+}
