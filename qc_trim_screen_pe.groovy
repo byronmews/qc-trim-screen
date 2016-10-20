@@ -23,6 +23,7 @@ fastqc_pre = {
 	}
 }
 
+@intermediate()
 trimmomatic_PE = {
 
 		doc "Trim reads using Trimmomatic using PE mode"
@@ -31,13 +32,16 @@ trimmomatic_PE = {
 		// Transform fastqc.gz to fastq
 
 		input_extension = ".fastq.gz"
-		
+			
 		products = [
             	("$input1".replaceAll(/.*\//,"") - input_extension + '_PE.fastq'),
            	("$input1".replaceAll(/.*\//,"") - input_extension + '_SE.fastq'),
             	("$input2".replaceAll(/.*\//,"") - input_extension + '_PE.fastq'),
             	("$input2".replaceAll(/.*\//,"") - input_extension + '_SE.fastq')
 		]
+		
+		// Tidy up any previous runs within the directory
+                //exec "rm -f trimmomatic.err"
 
 		// Transform fastqc.gz to fastq
 		transform(".fastq.gz") to (".fastq") {
@@ -90,18 +94,45 @@ fastqc_post = {
 			exec "fastqc -k 8 --nogroup $input1.fastq  -t 12 -o $output.dir"
                         exec "fastqc -k 8 --nogroup $input2.fastq -t 12 -o $output.dir"
 		}
+		forward input1, input2
 	}
 }
 
+
+screen = {
+
+	// Map all reads against human and univec db
+	doc "Run FastQ Screen, using human and UniVec db"
+	
+	exec """
+		fastq_screen --conf $SCREEN 
+		--aligner bowtie2 --threads 12 
+		--nohits 
+		--paired 
+		$input1.fastq $input2.fastq
+	"""
+}
+
+qc_summary = {
+
+	// Results parser
+	doc "QC stats summary file"
+	
+	exec """
+		bash qc_results_parser.pl
+	"""
+
+
+}
 
 
 
 // Single sample, no parallelism
 //Bpipe.run {
-//	fastqc_pre + trimmomatic_PE + fastqc_post
+//	fastqc_pre + trimmomatic_PE + fastqc_post + screen
 //}
 
 // Multiple samples where file names begin with sample name separated by underscore
 Bpipe.run {
-	"%_*.fastq.gz" * [ fastqc_pre + trimmomatic_PE + fastqc_post ]
+	"%_*.fastq.gz" * [ fastqc_pre + trimmomatic_PE + fastqc_post + screen ]
 }
