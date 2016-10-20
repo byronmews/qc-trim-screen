@@ -52,6 +52,8 @@ trimmomatic_PE = {
 			2>>trimmomatic.err
 		""" 
 		}
+		// Forwarding trimmed PE fastq files only
+		forward output1, output3
 	}
 }
 
@@ -80,25 +82,26 @@ fastqc_post = {
 
         // Fastqc output dir
         output.dir = "fastqc_post_qc"
+	filter("fastqc") {
 
-        filter("fastqc") {
                 // How the file name is getting transformed
-                transform(".fastq.gz") to ("_fastqc.zip") {
+                transform(".fastq") to ("_fastqc.zip") {
                         exec "mkdir -p $output.dir"
-			exec "fastqc -k 8 --nogroup ${input1.prefix}_PE.fastq  -t 12 -o $output.dir"
-                        exec "fastqc -k 8 --nogroup ${input2.prefix}_PE.fastq -t 12 -o $output.dir"
-                }
-        }
+			exec "fastqc -k 8 --nogroup $input1.fastq  -t 12 -o $output.dir"
+                        exec "fastqc -k 8 --nogroup $input2.fastq -t 12 -o $output.dir"
+		}
+	}
 }
 
 
 
-// Single sample, no parallelism
-run { fastqc_pre + trimmomatic_PE }
 
-// Multiple samples where file names begin with sample
-// name and are separated by underscore from the rest of the 
-// file name
+// Single sample, no parallelism
 //Bpipe.run {
-//	"%_*.fastq.gz" * [ fastqc_pre, trimmomatic_PE ]
+//	fastqc_pre + trimmomatic_PE + fastqc_post
 //}
+
+// Multiple samples where file names begin with sample name separated by underscore
+Bpipe.run {
+	"%_*.fastq.gz" * [ fastqc_pre + trimmomatic_PE + fastqc_post ]
+}
