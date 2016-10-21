@@ -20,13 +20,11 @@ my @trim_log_table; # trimmomatic log file
 my @sample_ids; # sync output by sample name
 my @qc_passed_pe_reads; # qc passed pe read number
 
-my $table_header = "sample_id\ttrimmed_pairs_remaining\ttrimmed_pairs_remaining_%\tforward_orphan_reads\tforward_orphan_reads_%\treverse_orphan_reads\treverse_orphan_reads_%\tdiscarded_pairs\tdiscarded_pairs_%\n";
-
-#push @summary_table,$table_header;
-
-
 open my $input_fh, '<', $trim_log_file
 	or die "Could not open file $trim_log_file $!";
+
+# Table header for @trim_log_table
+my $table_header_trim_log = "input_read_pairs\ttrimmed_pairs_remaining\ttrimmed_pairs_remaining_%\tforward_orphan_reads\tforward_orphan_reads_%\treverse_orphan_reads\treverse_orphan_reads_%\tdiscarded_pairs\tdiscarded_pairs_%\t";
 
 # Read log file by line
 foreach my $line (<$input_fh>) {
@@ -65,12 +63,16 @@ foreach my $line (<$input_fh>) {
 		my $reverse_only_pct = $split[17];
 		my $discarded = $split[19];
 		my $discarded_pct = $split[20];
-
+		
 		# Add to table array
-		push @trim_log_table, "$input_read_pairs\t$surviving_read_pairs\t$surviving_read_pairs_pct\t$forward_only\t$forward_only_pct\t$reverse_only\t$reverse_only_pct\t$discarded\t$discarded_pct\t";
+		push @trim_log_table, "$input_read_pairs\t$surviving_read_pairs\t$surviving_read_pairs_pct\t$forward_only\t$forward_only_pct\t$reverse_only\t$reverse_only_pct\t$discarded\t$discarded_pct";
 	}
 }
 close $input_fh;
+
+
+# Table header for @qc_passed_pe_reads
+my $table_header_read_number = "qc_passed_r1_filename\tread_number\t";
 
 # Count final read pairs in QC passed fastqs
 foreach my $sample_id (@sample_ids) {
@@ -78,36 +80,36 @@ foreach my $sample_id (@sample_ids) {
 	my $lines = 0; # line number counter
 		
 	# Change to fastq screen suffix naming convention
-	#$sample =~ s/.fastq.gz/_PE.no_hits_file.1.fastq/;	
-	#$sample =~ s/.fastq.gz/_PE.fastq/;
-	# currrently set as alt suffix
-	my $sample_full_name = $sample_id . "_L001_R1_001_PE.fastq";
-	
+	my $qc_passed_r1_filename = $sample_id . "_L001_R1_001_PE_no_hits_file.1.fastq";	
+
 	# Open QC passed fastq file
-	open my $fastq_fh, $sample_full_name
-		or die "Could not open file $sample_full_name $!";
+	open my $fastq_fh, $qc_passed_r1_filename
+		or die "Could not open file $qc_passed_r1_filename $!";
 	
 	# Count lines in file, adjust for fastq count
 	$lines++ while (<$fastq_fh>);
 	close $fastq_fh;
-	
 	my $read_number = $lines / 4;
 	
-	push @qc_passed_pe_reads, "$sample_full_name\t$read_number\t";
-	
+	# Build array
+	push @qc_passed_pe_reads, "$qc_passed_r1_filename\t$read_number\t";
 }
 
 ##########
 # Final output
-my $i = 0;
+
+# Write to stdout
+my $i = 0; # counter for all arrays
+
+print "sample_id\t$table_header_trim_log $table_header_read_number\n";
 
 foreach my $sample (@sample_ids) {
 	chomp($sample);
-	print "$sample $trim_log_table[$i] $qc_passed_pe_reads[$i]\n";
+	print "$sample\t$trim_log_table[$i]\t$qc_passed_pe_reads[$i]\n";
 	$i++;
 }
 
-
+# Write to file
 #open(my $output_fh, '>', $qc_summary);
 #print $output_fh @summary_table;
 #close $output_fh;
