@@ -1,3 +1,3 @@
 # qc_trim_screen
 
-bpipe staging area for fastqc and trimmomatic
+Bpipe stages for running fastqc, trimmomatic, host screen with a summarised table of run results.
