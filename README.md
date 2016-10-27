@@ -1,12 +1,14 @@
-Bpipe stages for running fastqc, trimmomatic, host screen with a summarised table of run results
+Bpipe stages for running core QC
 --------------
 
 Requires: qc_results_parser.pl
 
-Usage example:
---------------
+Uses fastqc, trimmomatic, fasqtc_screen and summarises results into single table.
 
 Expects PE fastq files. All PE fastq within folder are analysed, using the string before illumina sample index number as sample ID.
+
+Usage example:
+--------------
 
   $ bpipe run -r qc_trim_screen.groovy *
   
