@@ -1,7 +1,11 @@
 // Generic Illumina QC
 //
 // Workflow: FastQC > Trimmomatic > FastQC > Fastq Screen
-// Defaults to human/univec screen config
+// Usage: bpipe run -r qc_trim_screen.groovy *
+// Author: Graham Rose
+//
+
+
 
 TRIMMOMATIC="java -jar /usr/local/src/trimmomatic-0.32.jar"
 SCREEN="/usr/local/etc/fastq_screen_v0.4.4_config/fastq_screen_human.conf"
@@ -64,11 +68,11 @@ fastqc_post = {
         exec "fastqc -k 8 --nogroup $input3.fastq -t 12 -o $output.dir"
 }
 
-
+// Host screen defaults to human/univec screen config file, see readme
 screen = {
 
 	// Map all reads against human and univec db
-	doc "Run FastQ Screen, using human and UniVec db"
+	doc "Run FastQ Screen, using Human and UniVec db"
 	
 	exec """
 		fastq_screen --conf $SCREEN 
@@ -103,3 +107,10 @@ qc_summary = {
 Bpipe.run {
 	"%_S*_L001_R*_*.fastq.gz" * [ fastqc_pre + trimmomatic_PE +  fastqc_post +  screen ] + qc_summary
 } 
+
+
+
+
+
+
+
