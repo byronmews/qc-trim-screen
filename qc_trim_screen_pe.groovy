@@ -1,4 +1,4 @@
-// Generic Illumina QC
+// Generic Illumina QC PE reads
 //
 // Workflow: FastQC > Trimmomatic > FastQC > Fastq Screen
 // Usage: bpipe run -r qc_trim_screen.groovy *
