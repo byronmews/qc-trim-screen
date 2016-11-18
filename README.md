@@ -1,16 +1,18 @@
 Bpipe stages for running core QC
 --------------
 
-Requires: qc_results_parser.pl from repository
+Run either PE or SE versions.
+
+Requires: qc_results_parser_[se|pe].pl from repository
 
 Uses fastqc, trimmomatic, fasqtc_screen and summarises results into single table.
 
-Expects PE fastq files. All PE fastq within folder are analysed, using the string before illumina sample index number as sample ID.
+If running PE version all PE fastq within folder are analysed, using the string before illumina sample index number as sample ID.
 
-Usage example:
+Usage PE example:
 --------------
 
-  $ bpipe run -r qc_trim_screen.groovy *
+  $ bpipe run -r qc_trim_screen_pe.groovy *
   
 Produces the following files with suffixes or names:
  
