@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 ###############################################################################
-# Log files parser for qc_trim_screen pipeline.				      #
+# Log files parser for qc_trim_screen_pe.groovy pipeline.		      #
 #									      #
 # Expects the trimmomatic stderr as a single file named: trimmomatic.err      #
 #									      #
