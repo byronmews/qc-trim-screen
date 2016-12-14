@@ -10,6 +10,7 @@
 TRIMMOMATIC="java -jar /usr/local/src/trimmomatic-0.32.jar"
 SCREEN="/usr/local/etc/fastq_screen_v0.4.4_config/fastq_screen_human.conf"
 
+// Pre trim check 
 fastqc_pre = {
 	
 	doc "Run fastQC on raw reads"
@@ -25,13 +26,11 @@ fastqc_pre = {
 
 }
 
+// Trim using trimmomatic PE mode. Adapter/vector database hard set.
 trimmomatic_PE = {
 
 		doc "Trim reads using Trimmomatic using PE mode"
 	
-		//filter("trimmomatic_PE") {
-		// Transform fastqc.gz to fastq
-
 		input_extension = ".fastq.gz"
 			
 		products = [
@@ -42,7 +41,6 @@ trimmomatic_PE = {
 		]
 
 		// Transform fastqc.gz to fastq
-		//transform(".fastq.gz") to (".fastq") {
 		produce(products) {
 		exec """
 			$TRIMMOMATIC PE -phred33 
@@ -56,6 +54,7 @@ trimmomatic_PE = {
 		}
 }
 
+// Post trim check
 fastqc_post = {
 
         doc "Run fastQC on trimmed reads"
@@ -71,7 +70,7 @@ fastqc_post = {
 // Host screen defaults to human/univec screen config file, see readme
 screen = {
 
-	// Map all reads against human and univec db
+	// Map all reads against human and univec db. Variable refers to fastq_screen config file.
 	doc "Run FastQ Screen, using Human and UniVec db"
 	
 	exec """
@@ -83,6 +82,7 @@ screen = {
 	"""
 }
 
+// Calls perl parser to  write all output to formatted table
 qc_summary = {
 
 	// Results parser
