@@ -75,7 +75,7 @@ screen = {
 
 qc_summary = {
 
-	// Results parser
+	// Results summarised with se parser
 	doc "QC stats summary file"
 	
 	exec """

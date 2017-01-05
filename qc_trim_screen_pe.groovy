@@ -82,14 +82,14 @@ screen = {
 	"""
 }
 
-// Calls perl parser to  write all output to formatted table
+// Calls pe perl parser to  write all output to formatted table
 qc_summary = {
 
 	// Results parser
 	doc "QC stats summary file"
 	
 	exec """
-		perl qc_results_parser.pl
+		perl qc_results_parser_pe.pl
 	"""
 
 
