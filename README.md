@@ -31,5 +31,5 @@ Also requires:
 - Bowtie2
 - Fastq_screen (http://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/)
 
-Fastq screen uses bowtie2 indexes of Human GRCh38 and the Univec_v8 database.
+Fastq screen uses bowtie2 indexes of human assembly GRCh38 and the Univec v8 database (ftp://ftp.ncbi.nlm.nih.gov/pub/UniVec/)
 
