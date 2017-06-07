@@ -1,7 +1,7 @@
 Bpipe stages for running core QC
 --------------
 
-Run either PE or SE versions.
+Run as either PE or SE versions.
 
 Requires: qc_results_parser_[se|pe].pl from repository
 
